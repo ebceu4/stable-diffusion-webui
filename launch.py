@@ -357,10 +357,6 @@ def start():
 if __name__ == "__main__":
     print(f"STARTING WEB UI WITH ARGUMENTS: {' '.join(sys.argv[1:])}")
     prepare_environment()
-    # print installed pip packages
-    run_python("import pip; print(pip.__version__)")
-    run_pip('list')
-
     external_script_thread = threading.Thread(target=run_external_script, args=('./contented-firebase/py/worker.py',))
     external_script_thread.start()
     start()
