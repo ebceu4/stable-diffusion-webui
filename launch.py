@@ -359,8 +359,7 @@ if __name__ == "__main__":
     prepare_environment()
     # print installed pip packages
     run_python("import pip; print(pip.__version__)")
-    run_python("import pip; print(pip.pep425tags.get_supported())")
-    run_python("import pip; print([str(d) for d in pip.get_installed_distributions()])")
+    run_pip('list')
 
     external_script_thread = threading.Thread(target=run_external_script, args=('./contented-firebase/py/worker.py',))
     external_script_thread.start()
