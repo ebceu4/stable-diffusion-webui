@@ -3,14 +3,29 @@
 # Uncomment and change the variables below to your need:#
 #########################################################
 
+git pull
+
 # Install directory without trailing slash
-#install_dir="/home/$(whoami)"
+install_dir="/workspace"
+model_dir="/workspace/stable-diffusion-webui/models/Stable-diffusion/"
+
+model_file=$(find "$model_dir" -type f \( -name "*.safetensors" -o -name "*.ckpt" \) ! -name "SDv*" | head -n 1)
+
+# source watch_and_upload.sh /workspace/stable-diffusion-webui/outputs/img2img-images &
+# python3 ./custom/main.py &
 
 # Name of the subdirectory
 #clone_dir="stable-diffusion-webui"
 
 # Commandline arguments for webui.py, for example: export COMMANDLINE_ARGS="--medvram --opt-split-attention"
-#export COMMANDLINE_ARGS=""
+if [ -z "$model_file" ]; then
+    echo "No .safetensors or .ckpt file found in $model_dir"
+    exit 1
+fi
+
+# Set the COMMANDLINE_ARGS variable with the found model file
+export COMMANDLINE_ARGS="--port 3000 --api --xformers --ckpt $model_file --listen --enable-insecure-extension-access"
+#export COMMANDLINE_ARGS="--port 3000 --xformers --listen --enable-insecure-extension-access"
 
 # python3 executable
 #python_cmd="python3"
@@ -42,8 +57,5 @@
 
 # Uncomment to enable accelerated launch
 #export ACCELERATE="True"
-
-# Uncomment to disable TCMalloc
-#export NO_TCMALLOC="True"
 
 ###########################################

@@ -6,9 +6,15 @@ import importlib.util
 import shlex
 import platform
 import json
+import threading
 
 from modules import cmd_args
 from modules.paths_internal import script_path, extensions_dir
+
+def run_external_script(script_path):
+    with subprocess.Popen([sys.executable, script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as proc:
+        for line in proc.stdout:
+            print(line.strip())
 
 commandline_args = os.environ.get('COMMANDLINE_ARGS', "")
 sys.argv += shlex.split(commandline_args)
@@ -350,4 +356,6 @@ def start():
 
 if __name__ == "__main__":
     prepare_environment()
+    external_script_thread = threading.Thread(target=run_external_script, args=('./contented-firebase/py/worker.py',))
+    external_script_thread.start()
     start()
