@@ -353,10 +353,18 @@ def start():
     else:
         webui.webui()
 
+def print_pip_packages():
+    result = subprocess.run(["pip", "list"], capture_output=True, text=True)
+    print(result.stdout)
+
 
 if __name__ == "__main__":
     print(f"STARTING WEB UI WITH ARGUMENTS: {' '.join(sys.argv[1:])}")
     prepare_environment()
+    print_pip_packages()
+    print("STARTING WORKER THREAD")
     external_script_thread = threading.Thread(target=run_external_script, args=('./contented-firebase/py/worker.py',))
+    print("WORKER THREAD STARTING")
     external_script_thread.start()
+    print("WORKER THREAD STARTED")
     start()
