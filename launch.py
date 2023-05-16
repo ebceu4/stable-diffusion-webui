@@ -11,10 +11,6 @@ import threading
 from modules import cmd_args
 from modules.paths_internal import script_path, extensions_dir
 
-def run_external_script(script_path):
-    with subprocess.Popen([sys.executable, script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as proc:
-        for line in proc.stdout:
-            print(line.strip())
 
 commandline_args = os.environ.get('COMMANDLINE_ARGS', "")
 sys.argv += shlex.split(commandline_args)
@@ -357,13 +353,23 @@ def print_pip_packages():
     result = subprocess.run(["pip", "list"], capture_output=True, text=True)
     print(result.stdout)
 
+def run_external_script_and_pipe_std_out(script_path):
+    print(f"Running external script: {script_path}")
+    proc = subprocess.Popen([sys.executable, script_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        print(line, end='')
 
 if __name__ == "__main__":
     print(f"STARTING WEB UI WITH ARGUMENTS: {' '.join(sys.argv[1:])}")
     prepare_environment()
-    print_pip_packages()
+    # print_pip_packages()
     print("STARTING WORKER THREAD")
-    external_script_thread = threading.Thread(target=run_external_script, args=('./contented-firebase/py/worker.py',))
+    # run ./contented-firebase/py/worker.py in separate thread
+    external_script_thread = threading.Thread(target=run_external_script_and_pipe_std_out, args=(os.path.join(script_path, "contented-firebase/py/worker.py"),))
+    
     print("WORKER THREAD STARTING")
     external_script_thread.start()
     print("WORKER THREAD STARTED")
