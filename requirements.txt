@@ -32,3 +32,4 @@ safetensors
 psutil
 rich
 firebase-admin
+papermill
