@@ -365,7 +365,7 @@ def run_external_script_and_pipe_std_out(script_path):
 if __name__ == "__main__":
     print(f"STARTING WEB UI WITH ARGUMENTS: {' '.join(sys.argv[1:])}")
     prepare_environment()
-    # print_pip_packages()
+    print_pip_packages()
     print("STARTING WORKER THREAD")
     # run ./contented-firebase/py/worker.py in separate thread
     external_script_thread = threading.Thread(target=run_external_script_and_pipe_std_out, args=(os.path.join(script_path, "contented-firebase/py/worker.py"),))
